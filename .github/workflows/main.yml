@@ -1,0 +1,39 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+    defaults:
+     run:
+      shell: msys2 {0}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+         repository: jwt27/build-gcc
+
+      - name: Install dependencies
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW32
+          install: |
+            base-devel mingw-w64-i686-toolchain mingw-w64-i686-curl mingw-w64-i686-zlib mingw-w64-i686-python
+            compression m4 dos2unix nasm git
+          update: true
+
+      - name: build djgpp
+        run: |
+          ./build-djgpp.sh --target=i586-pc-msdosdjgpp --prefix=/mnt/c/djgpp --enable-languages=c,c++ binutils gcc djgpp-cvs watt32
+
+      - name: package djgpp
+        run: tar -zcvf djgpp.tar.gz /mnt/c/djppg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: djgpp
+          path: djgpp.tar.gz
