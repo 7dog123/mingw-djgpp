@@ -31,7 +31,7 @@ jobs:
           ./build-djgpp.sh --target=i586-pc-msdosdjgpp --prefix=/usr/local/djgpp --enable-languages=c,c++ binutils gcc djgpp-cvs watt32
 
       - name: package djgpp
-        run: tar -zcvf djgpp.tar.gz /usr/local/djppg
+        run: tar -zcvf djgpp.tar.gz /usr/local/djgpp
 
       - uses: actions/upload-artifact@v4
         with:
